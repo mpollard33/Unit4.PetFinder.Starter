@@ -8,20 +8,20 @@ const app = express ();
 const PORT = 8080;
 
 // GET - / - returns homepage
-app.get ('/', (req, res) => {
-  // serve up the public folder as static index.html file
-  res.sendFile ('./public/index.html');
-});
+// app.get ('/', (req, res) => {
+//   // serve up the public folder as static index.html file
+
+// });
 
 // hello world route
 app.get ('/api', (req, res) => {
-  res.send ('Hello World!');
+  res.json ('Hello World!');
 });
 
 // get all pets from the database
 app.get ('/api/v1/pets', (req, res) => {
   // send the pets array as a response
-  res.send (pets);
+  res.json (pets);
 });
 
 // get pet by owner with query string
@@ -29,11 +29,18 @@ app.get ('/api/v1/pets/owner', (req, res) => {
   // get the owner from the request
   const owner = req.query.owner;
 
+  if (!owner) {
+    return res.status (400).json ({error: `${owner} is missing`});
+  }
+
   // find the pet in the pets array
   const pet = pets.find (pet => pet.owner === owner);
 
+  if (!pet) {
+    return res.status (400).json ({error: `${pet} is missing`});
+  }
   // send the pet as a response
-  res.send ({name: pet});
+  res.json ({pet: pet});
 });
 
 // get pet by name
